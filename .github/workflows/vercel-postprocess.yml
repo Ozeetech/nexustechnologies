@@ -1,0 +1,25 @@
+name: On Vercel Deployment Succeeded
+
+on:
+  repository_dispatch:
+    types: [vercel-deploy-success]
+
+jobs:
+  postdeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: "DO WORK: e.g., run codegen, update a file, build, etc."
+        run: |
+          # Do your commands here (e.g., generate build artifacts)
+          echo "Postdeploy step"
+      - name: Commit changes
+        run: |
+          git config --global user.email "bot@example.com"
+          git config --global user.name "VercelBot"
+          git add .
+          git commit -m "Automated post-vercel-deploy commit" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
